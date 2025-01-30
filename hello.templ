@@ -1,0 +1,23 @@
+package main
+
+import "filerain/templates"
+
+templ hello(name string) {
+	@templates.AuthLayout("Hello world") {
+		<card>
+			<form method="get">
+				<card-body>
+					<form-group class="mb-3">
+						<label for="email" class="required">Email</label>
+						<input id="email" name="email" placeholder="username@example.com"/>
+					</form-group>
+					<form-group class="mb-3">
+						<label for="password" class="required">Password</label>
+						<input id="password" type="password" name="password" placeholder="********"/>
+					</form-group>
+					<button class="primary" type="submit">Sign in</button>
+				</card-body>
+			</form>
+		</card>
+	}
+}

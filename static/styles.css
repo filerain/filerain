@@ -1,0 +1,122 @@
+:root {
+    --primary: #066fd1;
+    --primary-hover: #0564bc;
+    --primary-active: #0564bc;
+    --primary-foreground: #f6f8fb;
+    --white: #FFF;
+    --danger: #d63939;
+
+    --color: #182433; /* Font color */
+    --background: #f6f8fb;
+
+    font-family: InterVariable, sans-serif;
+    --border-radius: 4px;
+
+    --border-color: #dce1e7;
+}
+
+/** Global **/
+html {
+    font-size: 14px;
+}
+
+body {
+    color: var(--color);
+    background: var(--background);
+
+
+    letter-spacing: 0;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "liga" 0,"cv03","cv04","cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/** Global **/
+* {
+    box-sizing: border-box;
+}
+
+/** Buttons **/
+button {
+    padding: .5rem 1rem;
+    border: red;
+    border-radius: var(--border-radius);
+    background-color: var(--btn-background);
+    color: var(--btn-color);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all .3s;
+
+    &:hover {
+        background-color: var(--btn-hover-backgorund);
+        color: var(--btn-hover-color);
+    }
+
+    &.primary {
+        /** Normal State **/
+        --btn-background: var(--primary);
+        --btn-color: var(--primary-foreground);
+
+        /** Hover state **/
+        --btn-hover-backgorund: var(--primary-hover);
+        --btn-hover-color: var(--primary-foreground);
+    }
+}
+
+/** Cards **/
+card {
+    display: block;
+    background: #fff;
+    border: 1px solid #0420451a;
+    border-radius: var(--border-radius);
+
+    & card-body {
+        display: block;
+        padding: 2.5rem;
+    }
+}
+
+/** Inputs **/
+input {
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+
+    padding: .5rem .75rem;
+}
+
+/** Form Group **/
+form-group {
+    display: block;
+
+    label {
+        display: inline-block;
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: .5rem;
+
+        &.required:after {
+            display: inline;
+            color: var(--danger);
+            margin-left: .125rem;
+            content: "*";
+        }
+    }
+
+    input {
+        display: block;
+        font-size: 1rem;
+        width: 100%;
+    }
+}
+
+layout.auth {
+    display: block;
+    margin: 100px auto 0;
+    max-width: 400px;
+}
+
+/** Utils **/
+.mb-3 {
+    margin-bottom: 16px;
+}
