@@ -1,0 +1,45 @@
+package templates
+
+import (
+	"net/http"
+	"net/url"
+)
+
+templ PageSignUp(r *http.Request, errorBag url.Values) {
+	@AuthLayout("Sign up") {
+		<card>
+			<form action="/auth/signup" method="POST">
+				<card-body>
+					<form-group class="mb-3">
+						<label for="email" class="required">Email</label>
+						<input
+							id="email"
+							name="email"
+							value={ r.PostFormValue("email") }
+							placeholder="username@example.com"
+							class={ templ.KV("error", errorBag.Has("email")) }
+						/>
+						if errorBag.Has("email") {
+							<form-group-error>{ errorBag.Get("email") }</form-group-error>
+						}
+					</form-group>
+					<form-group class="mb-3">
+						<label for="password" class="required">Password</label>
+						<input
+							id="password"
+							type="password"
+							name="password"
+							value={ r.PostFormValue("password") }
+							placeholder="********"
+							class={ templ.KV("error", errorBag.Has("password")) }
+						/>
+						if errorBag.Has("password") {
+							<form-group-error>{ errorBag.Get("password") }</form-group-error>
+						}
+					</form-group>
+					<button class="primary" type="submit">Sign up</button>
+				</card-body>
+			</form>
+		</card>
+	}
+}

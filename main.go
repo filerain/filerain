@@ -27,8 +27,12 @@ func main() {
 	// Serve static files
 	http.Handle("/", fs)
 
+	http.HandleFunc("GET /auth/signup", signUpHandler)
+	http.HandleFunc("POST /auth/signup", signUpHandlerPost)
 	http.Handle("/hello", templ.Handler(hello("Title")))
+
 	http.HandleFunc("/headers", headers)
 
 	http.ListenAndServe(":80", nil)
+	print("Serving at port 80")
 }
