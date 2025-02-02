@@ -1,37 +1,40 @@
 package main
 
 import (
-	"embed"
+	"context"
 	"fmt"
-	"github.com/a-h/templ"
-	"io/fs"
+	"github.com/jackc/pgx/v5"
 	"net/http"
+	"os"
 )
 
-//go:embed static
-var staticFiles embed.FS
-
-func headers(w http.ResponseWriter, req *http.Request) {
-
-	for name, headers := range req.Header {
-		for _, h := range headers {
-			fmt.Fprintf(w, "%v: %v\n", name, h)
-		}
-	}
-}
-
 func main() {
-	var staticFS = fs.FS(staticFiles)
-	fs := http.FileServer(http.FS(staticFS))
+	urlExample := "postgres://postgres:postgres@localhost:5432/filerain"
+	conn, err := pgx.Connect(context.Background(), urlExample)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		os.Exit(1)
+	}
+	defer conn.Close(context.Background())
 
-	// Serve static files
-	http.Handle("/", fs)
+	// Execute a query from
+	var name string
+	var weight int64
+	err = conn.QueryRow(context.Background(), "select 'Name' as name, 2 as weight;").Scan(&name, &weight)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
+		os.Exit(1)
+	}
+
+	fmt.Println(name, weight)
+
+	http.HandleFunc("GET /", signUpHandler)
+
+	fs := http.FileServer(http.Dir("./static"))
+	http.Handle("GET /static/", http.StripPrefix("/static/", fs))
 
 	http.HandleFunc("GET /auth/signup", signUpHandler)
 	http.HandleFunc("POST /auth/signup", signUpHandlerPost)
-	http.Handle("/hello", templ.Handler(hello("Title")))
-
-	http.HandleFunc("/headers", headers)
 
 	http.ListenAndServe(":80", nil)
 	print("Serving at port 80")

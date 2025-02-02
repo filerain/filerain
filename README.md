@@ -1,5 +1,6 @@
 # Prerequisites
 - Golang 1.23.4
+- Docker 27.5.1 + Docker Compose
 
 # Running locally
 ```shell

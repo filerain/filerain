@@ -32,10 +32,5 @@ func signUpHandlerPost(w http.ResponseWriter, r *http.Request) {
 	v := govalidator.New(opts)
 	e := v.Validate()
 
-	if len(e) > 0 {
-		templates.PageSignUp(r, e).Render(r.Context(), w)
-		return
-	}
-
-	// After validation
+	templates.PageSignUp(r, e).Render(r.Context(), w)
 }
