@@ -4,11 +4,13 @@ import (
 	"context"
 	"fmt"
 	"github.com/jackc/pgx/v5"
+	"log"
 	"net/http"
 	"os"
 )
 
 func main() {
+	runMigrations()
 	urlExample := "postgres://postgres:postgres@localhost:5432/filerain"
 	conn, err := pgx.Connect(context.Background(), urlExample)
 	if err != nil {
@@ -36,6 +38,6 @@ func main() {
 	http.HandleFunc("GET /auth/signup", signUpHandler)
 	http.HandleFunc("POST /auth/signup", signUpHandlerPost)
 
-	http.ListenAndServe(":80", nil)
-	print("Serving at port 80")
+	log.Println("Serving at: http://localhost:8080")
+	http.ListenAndServe(":8080", nil)
 }
