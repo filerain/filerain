@@ -53,5 +53,6 @@ will be done using HTMX only if necessary. It would be nice to leverage all the 
 # Running locally
 
 ```shell
+docker compose up -d
 templ generate --watch --proxy="http://localhost:80" --cmd="go run ."
 ```
