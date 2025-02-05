@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS auth_passwords;
+DROP TABLE IF EXISTS users;

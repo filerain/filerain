@@ -10,6 +10,7 @@ goal is to keep good performance and small resource footprint.
 - HTMX
 - Developer sweat and tears
 - Flutter (for mobile/desktop app)
+- Passing env vars via system env (for docker) or CLI
 
 This app will be server-side rendered. There will be a single source of truth, which is the back-end. Partial reloading
 will be done using HTMX only if necessary. It would be nice to leverage all the things browsers give us out of the box.
@@ -55,4 +56,14 @@ will be done using HTMX only if necessary. It would be nice to leverage all the 
 ```shell
 docker compose up -d
 templ generate --watch --proxy="http://localhost:80" --cmd="go run ."
+```
+
+# Creating a migration
+```shell
+migrate create -ext sql -dir db/migrations -seq name
+```
+
+Running manually:
+```shell
+migrate -database "postgres://postgres:postgres@localhost:5432/filerain" -path db/migrations up
 ```

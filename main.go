@@ -19,16 +19,7 @@ func main() {
 	}
 	defer conn.Close(context.Background())
 
-	// Execute a query from
-	var name string
-	var weight int64
-	err = conn.QueryRow(context.Background(), "select 'Name' as name, 2 as weight;").Scan(&name, &weight)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
-		os.Exit(1)
-	}
-
-	fmt.Println(name, weight)
+	SignUp(conn, "asd@asd.com", "123456")
 
 	http.HandleFunc("GET /", signUpHandler)
 

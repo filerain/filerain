@@ -5,6 +5,7 @@ go 1.23.4
 require (
 	github.com/a-h/templ v0.3.819
 	github.com/golang-migrate/migrate/v4 v4.18.2
+	github.com/henvic/pgq v0.0.3
 	github.com/jackc/pgx/v5 v5.7.2
 	github.com/thedevsaddam/govalidator v1.9.10
 )

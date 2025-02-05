@@ -1,10 +1,14 @@
 package main
 
 import (
+	"context"
 	"filerain/templates"
+	"fmt"
+	"github.com/jackc/pgx/v5"
 	"github.com/thedevsaddam/govalidator"
 	"net/http"
 	"net/url"
+	"os"
 )
 
 func signUpHandler(w http.ResponseWriter, r *http.Request) {
@@ -33,4 +37,21 @@ func signUpHandlerPost(w http.ResponseWriter, r *http.Request) {
 	e := v.Validate()
 
 	templates.PageSignUp(r, e).Render(r.Context(), w)
+}
+
+func SignUp(conn *pgx.Conn, email string, password string) {
+	println(email)
+	sql := "SELECT EXISTS (SELECT 1 FROM auth_passwords WHERE email = $1)"
+	var exists bool
+	err := conn.QueryRow(context.Background(), sql, email).Scan(&exists)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
+		os.Exit(1)
+	}
+
+	if exists {
+		println("User exists")
+	} else {
+		println("User does NOT exist")
+	}
 }
