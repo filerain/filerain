@@ -2,13 +2,13 @@ package main
 
 import (
 	"context"
+	"crypto/sha256"
 	"filerain/templates"
-	"fmt"
 	"github.com/jackc/pgx/v5"
 	"github.com/thedevsaddam/govalidator"
+	"log"
 	"net/http"
 	"net/url"
-	"os"
 )
 
 func signUpHandler(w http.ResponseWriter, r *http.Request) {
@@ -39,19 +39,42 @@ func signUpHandlerPost(w http.ResponseWriter, r *http.Request) {
 	templates.PageSignUp(r, e).Render(r.Context(), w)
 }
 
-func SignUp(conn *pgx.Conn, email string, password string) {
-	println(email)
+func SignUp(conn *pgx.Conn, salt string, email string, password string) error {
+	tx, err := conn.BeginTx(context.TODO(), pgx.TxOptions{})
+	if err != nil {
+		return err
+	}
+
 	sql := "SELECT EXISTS (SELECT 1 FROM auth_passwords WHERE email = $1)"
 	var exists bool
-	err := conn.QueryRow(context.Background(), sql, email).Scan(&exists)
+	err = conn.QueryRow(context.Background(), sql, email).Scan(&exists)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
-		os.Exit(1)
+		return err
 	}
 
 	if exists {
-		println("User exists")
-	} else {
-		println("User does NOT exist")
+		return err
 	}
+
+	// Create new user
+	sql = "INSERT INTO users (first_name, last_name) VALUES ('', '') RETURNING id"
+
+	var userId int64
+	err = conn.QueryRow(context.Background(), sql).Scan(&userId)
+	if err != nil {
+		return err
+	}
+
+	saltedPassword := sha256.Sum256([]byte(password + salt))
+	sql = "INSERT INTO auth_passwords  (email, password, user_id) VALUES ($1, $2, $3)"
+
+	_, err = conn.Query(context.Background(), sql, email, saltedPassword[:], userId)
+
+	if err != nil {
+		log.Fatalf("Query failed: %v\n", err)
+	}
+
+	tx.Commit(context.TODO())
+
+	return nil
 }

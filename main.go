@@ -19,7 +19,7 @@ func main() {
 	}
 	defer conn.Close(context.Background())
 
-	SignUp(conn, "asd@asd.com", "123456")
+	SignUp(conn, "my_salt", "asd@asd.com", "123456")
 
 	http.HandleFunc("GET /", signUpHandler)
 

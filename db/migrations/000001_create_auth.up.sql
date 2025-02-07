@@ -8,6 +8,6 @@ CREATE TABLE IF NOT EXISTS users
 CREATE TABLE IF NOT EXISTS auth_passwords
 (
     email    varchar(255) PRIMARY KEY,
-    password VARCHAR(64) NOT NULL,
+    password bytea NOT NULL,
     user_id  int NOT NULL REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
