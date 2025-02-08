@@ -4,9 +4,9 @@ import (
 	"context"
 	"crypto/sha256"
 	"filerain/templates"
+	"fmt"
 	"github.com/jackc/pgx/v5"
 	"github.com/thedevsaddam/govalidator"
-	"log"
 	"net/http"
 	"net/url"
 )
@@ -40,19 +40,20 @@ func signUpHandlerPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func SignUp(conn *pgx.Conn, salt string, email string, password string) error {
-	tx, err := conn.BeginTx(context.TODO(), pgx.TxOptions{})
+	tx, err := conn.BeginTx(context.Background(), pgx.TxOptions{})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to start transaction: %w", err)
 	}
 
 	sql := "SELECT EXISTS (SELECT 1 FROM auth_passwords WHERE email = $1)"
 	var exists bool
 	err = conn.QueryRow(context.Background(), sql, email).Scan(&exists)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to check if user exists: %w", err)
 	}
 
 	if exists {
+		// TODO: Improve error thrown here
 		return err
 	}
 
@@ -62,7 +63,7 @@ func SignUp(conn *pgx.Conn, salt string, email string, password string) error {
 	var userId int64
 	err = conn.QueryRow(context.Background(), sql).Scan(&userId)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create user: %w", err)
 	}
 
 	saltedPassword := sha256.Sum256([]byte(password + salt))
@@ -71,10 +72,13 @@ func SignUp(conn *pgx.Conn, salt string, email string, password string) error {
 	_, err = conn.Query(context.Background(), sql, email, saltedPassword[:], userId)
 
 	if err != nil {
-		log.Fatalf("Query failed: %v\n", err)
+		return fmt.Errorf("failed to store authentication details: %w", err)
 	}
 
-	tx.Commit(context.TODO())
+	err = tx.Commit(context.Background())
+	if err != nil {
+		return fmt.Errorf("failed to commit transaction: %w", err)
+	}
 
 	return nil
 }
